@@ -59,14 +59,25 @@ public class ClassGeneration {
 
         MethodSpec save = MethodSpec.methodBuilder("save")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(TypeVariableName.get("T"), devPoolClass.name())
+                .addParameter(TypeVariableName.get("T"), "entity")
+                .addCode(CodeBlock.builder()
+                        .addStatement("this.dao.save(entity)")
+                        .build())
                 .build();
 
+        MethodSpec delete = MethodSpec.methodBuilder("delete")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(String.class, "id")
+                .addCode(CodeBlock.builder()
+                        .addStatement("this.dao.deleteById(new ObjectId(id), Object.class)")
+                        .build())
+                .build();
 
         TypeSpec typeSpec = TypeSpec.classBuilder("AbstractService")
                 .addModifiers(Modifier.PUBLIC)
                 .addField(fiedlService)
                 .addMethod(save)
+                .addMethod(delete)
                 .addTypeVariable(TypeVariableName.get("T"))
                 .build();
 
@@ -80,14 +91,103 @@ public class ClassGeneration {
     }
 
     public void constructService(DevPoolClass devPoolClass) throws IOException {
-        String nome = StringUtils.capitalize(devPoolClass.name());
-        ClassName className = ClassName.bestGuess(devPoolClass.packageName() + ".service." + "AbstractService");
+        String entityName = StringUtils.capitalize(devPoolClass.name());
+        String name = entityName + "Service";
         ClassName daoName = ClassName.bestGuess(devPoolClass.packageName() + ".service." + "MongoDAO");
         ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".service." + devPoolClass.name());
 
-        TypeSpec typeSpec = TypeSpec.classBuilder(nome + "Service")
+        MethodSpec privateContructor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
+                .addStatement("this.dao = new MongoDAO<>();")
+                .build();
+
+
+        MethodSpec instance = MethodSpec.methodBuilder("init")
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(ParameterizedTypeName.get(className,TypeVariableName.get("T")))
+                .addModifiers(Modifier.STATIC)
+                .addStatement("return new " + name + "()")
+                .build();
+
+        FieldSpec fiedlService = FieldSpec
+                .builder(ParameterizedTypeName.get(daoName, entityClass), "dao")
+                .addModifiers(Modifier.PRIVATE)
+                .build();
+
+        MethodSpec save = MethodSpec.methodBuilder("save")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(entityClass, "entity")
+                .addCode(CodeBlock.builder()
+                        .addStatement("this.dao.save(entity)")
+                        .build())
+                .build();
+
+        MethodSpec update = MethodSpec.methodBuilder("update")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(entityClass, "entity")
+                .addParameter(String.class, "id")
+                .addCode(CodeBlock.builder()
+                        .addStatement("ResponseModel<String> r = new ResponseModel<>()")
+                        .addStatement("this.dao.update(entity, new ObjectId(id), " + entityName + ".class)")
+                        .addStatement("r.getDados().add(id)")
+                        .addStatement("r.setMensagem(\"ok\")")
+                        .addStatement("return r")
+                        .build())
+                .returns(ClassName.bestGuess("ResponseModel"))
+                .build();
+
+        MethodSpec delete = MethodSpec.methodBuilder("deleteById")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(String.class, "id")
+                .addCode(CodeBlock.builder()
+                        .addStatement("this.dao.deleteById(new ObjectId(id), " + entityName + ".class)")
+                        .build())
+                .build();
+
+        MethodSpec findAll = MethodSpec.methodBuilder("findAll")
+                .addModifiers(Modifier.PUBLIC)
+                .addCode(CodeBlock.builder()
+                        .addStatement("this.dao.setDataStore()")
+                        .addStatement("Query<" + entityName + "> query = this.dao.getDs().createQuery(" + entityName + ".class)")
+                        .addStatement("QueryResults find = dao.find(query)")
+                        .addStatement("ResponseModel<" + entityName + "> r = new ResponseModel<>()")
+                        .addStatement("r.getDados().addAll(find.asList())")
+                        .addStatement("r.setMensagem(\"ok\")")
+                        .addStatement("return r")
+                        .build())
+                .returns(ClassName.bestGuess("ResponseModel"))
+                .build();
+
+        MethodSpec findById = MethodSpec.methodBuilder("findById")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(String.class, "id")
+                .addCode(CodeBlock.builder()
+                        .addStatement("ResponseModel<" + entityName + "> response = new ResponseModel<>()")
+                        .addStatement("Query<" + entityName + "> query = this.dao.getDs().createQuery(" + entityName + ".class);")
+                        .addStatement("query.and(query.criteria(\"_id\").equal(id))")
+                        .addStatement("QueryResults<" + entityName + "> find = this.dao.find(query)")
+                        .beginControlFlow("if (find.count() == 0)")
+                        .addStatement("response.setMensagem(\"Nenhum resultado encontrado\")")
+                        .addStatement("response.setCodigoErro(404)")
+                        .addStatement("return response")
+                        .endControlFlow()
+                        .addStatement("response.setMensagem(\"ok\")")
+                        .addStatement("response.getDados().add(find.get())")
+                        .addStatement("return response")
+                        .build())
+                .returns(ClassName.bestGuess("ResponseModel"))
+                .build();
+
+
+        TypeSpec typeSpec = TypeSpec.classBuilder(name)
+                .addModifiers(Modifier.PUBLIC)
+                .addField(fiedlService)
+                .addMethod(instance)
+                .addMethod(privateContructor)
+                .addMethod(save)
+                .addMethod(update)
+                .addMethod(delete)
+                .addMethod(findById)
+                .addMethod(findAll)
                 .build();
 
         JavaFile file = JavaFile
@@ -118,11 +218,11 @@ public class ClassGeneration {
         CodeBlock findAll = CodeBlock
                 .builder()
                 .add("path(basePath + \"/" + devPoolClass.name().toLowerCase() + "\" , () -> {\n").indent()
-                .add("post(\"\", (request, response) -> service.save(gson.fromJson(request.body(), " + devPoolClass.packageName() + ".models." + name + ".class), response), gson::toJson ) \n")
-                .add("get(\"\", (request, response) -> service.getAll(), gson::toJson ) \n")
-                .add("get(\"/:id\", (request, response) -> service.findById(request.params(\":id\")), gson::toJson ) \n")
-                .add("put(\"/:id\", (request, response) -> service.update(gson.fromJson(request.body(), " + devPoolClass.packageName() + ".models." + name + ".class),request.params(\":id\"), response), gson::toJson ) \n")
-                .add("delete(\"/:id\", (request, response) -> service.deleteById(request.params(\":id\")), gson::toJson ) \n").unindent()
+                .add("post(\"\", (request, response) -> service.save(gson.fromJson(request.body(), " + devPoolClass.packageName() + ".models." + name + ".class), response), gson::toJson ); \n")
+                .add("get(\"\", (request, response) -> service.findAll(), gson::toJson ); \n")
+                .add("get(\"/:id\", (request, response) -> service.findById(request.params(\":id\")), gson::toJson ); \n")
+                .add("put(\"/:id\", (request, response) -> service.update(gson.fromJson(request.body(), " + devPoolClass.packageName() + ".models." + name + ".class),request.params(\":id\"), response), gson::toJson ); \n")
+                .add("delete(\"/:id\", (request, response) -> service.deleteById(request.params(\":id\")), gson::toJson ); \n").unindent()
                 .add("});")
                 .build();
 

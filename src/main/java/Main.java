@@ -15,13 +15,13 @@ public class Main {
         /**
          * Gerando entity
          */
-      //  classGenerator.contrucEntity(classe);
+        classGenerator.contrucEntity(classe);
 
 
         /**
          * Gerador service com Abstract
          */
-   //     classGenerator.constructService(classe);
+        classGenerator.constructService(classe);
 
         /**
          * Gerador de resource
@@ -30,36 +30,6 @@ public class Main {
         classGenerator.constructResource(classe);
 
 
-    }
-
-    public static String getUserSchema() {
-        return """
-                {
-                	"name": "Usuario",
-                	"serializedName": "usuarios",
-                	"packageName": "br.com.docvirtus",
-                	"attributes": [
-                	   {
-                			"name": "id",
-                			"type": "objectid",
-                			"serializedName": "hexaId"
-                		},
-                		{
-                			"name": "nome",
-                			"type": "string",
-                			"indexed": true,           			
-                			"unique": true
-                		},
-                		{
-                			"name": "dataNascimento",
-                			"serializedName": "data_nascimento",
-                			"type": "date",
-                			"required": true
-                		}
-                	]
-
-                }                                                             
-                                """;
     }
 
 
@@ -72,8 +42,7 @@ public class Main {
                 	"attributes": [
                 	   {
                 			"name": "id",
-                			"type": "objectid",
-                			"serializedName": "hexaId"
+                			"type": "objectid"
                 		},
                 		{
                 			"name": "descricao",

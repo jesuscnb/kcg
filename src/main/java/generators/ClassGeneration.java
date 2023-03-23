@@ -101,8 +101,8 @@ public class ClassGeneration {
         CodeBlock resources = CodeBlock
                 .builder()
                 .add("path(Config.get().SERVER_PATH + \"/" + devPoolClass.name().toLowerCase() + "\" , () -> {\n").indent()
-                .add("post(\"\", (request, response) -> service.save(gson.fromJson(request.body(), " + devPoolClass.name() + ".class)), JsonTransform::response ); \n")
-                .add("put(\"/:id\", (request, response) -> service.update(gson.fromJson(request.body(), " + devPoolClass.name() + ".class),request.params(\":id\")), JsonTransform::response ); \n")
+                .add("post(\"\", (request, response) -> service.save(gson.fromJson(request.body(), " + entityClass.simpleName() + ".class)), JsonTransform::response ); \n")
+                .add("put(\"/:id\", (request, response) -> service.update(gson.fromJson(request.body(), " + entityClass.simpleName() + ".class),request.params(\":id\")), JsonTransform::response ); \n")
                 .add("get(\"\", (request, response) -> service.findAll(), JsonTransform::response ); \n")
                 .add("get(\"/:id\", (request, response) -> service.findById(request.params(\":id\")), JsonTransform::response ); \n")
                 .add("delete(\"/:id\", (request, response) -> service.delete(request.params(\":id\")), JsonTransform::response ); \n").unindent()

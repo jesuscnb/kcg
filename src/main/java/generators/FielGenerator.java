@@ -1,7 +1,11 @@
 package generators;
 
+import com.google.gson.annotations.SerializedName;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
+import org.bson.BsonType;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.bson.types.ObjectId;
 import pojos.DevPoolAttribute;
 
@@ -56,9 +60,10 @@ public class FielGenerator {
                         .addModifiers(Modifier.PRIVATE)
                         .build();
             case "objectid":
-                return FieldSpec.builder(ObjectId.class, attribute.name())
+                return FieldSpec.builder(String.class, attribute.name())
                         .addModifiers(Modifier.PRIVATE)
                         .addAnnotation(BsonId.class)
+                        .addAnnotation(AnnotationSpec.builder(BsonRepresentation.class).addMember("value", "$T.$L", BsonType.class, BsonType.OBJECT_ID).build())
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .build();
             default:

@@ -1,8 +1,8 @@
 package generators;
 
 import com.squareup.javapoet.FieldSpec;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Id;
 import pojos.DevPoolAttribute;
 
 import javax.lang.model.element.Modifier;
@@ -58,7 +58,7 @@ public class FielGenerator {
             case "objectid":
                 return FieldSpec.builder(ObjectId.class, attribute.name())
                         .addModifiers(Modifier.PRIVATE)
-                        .addAnnotation(Id.class)
+                        .addAnnotation(BsonId.class)
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .build();
             default:

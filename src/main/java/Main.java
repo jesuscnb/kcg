@@ -15,23 +15,13 @@ public class Main {
         /**
          * Gerando entity
          */
-        classGenerator.contrucEntity(classe);
-
-        /**
-         * Gerando Service Abstrata
-         */
-        classGenerator.contructAbstractService(classe);
-
-        /**
-         * Gerador service sem Abstract
-         */
-        classGenerator.constructServiceHithoutAbstract(classe);
+      //  classGenerator.contrucEntity(classe);
 
 
         /**
          * Gerador service com Abstract
          */
-        classGenerator.constructServiceWithAbstract(classe);
+   //     classGenerator.constructService(classe);
 
         /**
          * Gerador de resource

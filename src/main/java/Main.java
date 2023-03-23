@@ -1,8 +1,6 @@
 import com.google.gson.Gson;
-import com.squareup.javapoet.TypeSpec;
 import generators.ClassGeneration;
 import pojos.DevPoolClass;
-import utils.FileUtils;
 
 import java.io.IOException;
 
@@ -11,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Gson gson = new Gson();
-        DevPoolClass classe = gson.fromJson(getUserSchema(), DevPoolClass.class);
+        DevPoolClass classe = gson.fromJson(getTipoTramitacao(), DevPoolClass.class);
         ClassGeneration classGenerator = ClassGeneration.init();
 
         /**
@@ -25,9 +23,15 @@ public class Main {
         classGenerator.contructAbstractService(classe);
 
         /**
-         * Gerador da service
+         * Gerador service sem Abstract
          */
-        classGenerator.constructService(classe);
+        classGenerator.constructServiceHithoutAbstract(classe);
+
+
+        /**
+         * Gerador service com Abstract
+         */
+        classGenerator.constructServiceWithAbstract(classe);
 
         /**
          * Gerador de resource
@@ -67,6 +71,31 @@ public class Main {
                 }                                                             
                                 """;
     }
+
+
+    public static String getTipoTramitacao() {
+        return """
+                {
+                	"name": "TipoTramitacao",
+                	"serializedName": "tipo-tramitacoes",
+                	"packageName": "br.com.docvirtus",
+                	"attributes": [
+                	   {
+                			"name": "id",
+                			"type": "objectid",
+                			"serializedName": "hexaId"
+                		},
+                		{
+                			"name": "descricao",
+                			"type": "string",
+                			"indexed": true,           			
+                			"unique": false
+                		}
+                	]
+                }                                                             
+                                """;
+    }
+
 
 
 }

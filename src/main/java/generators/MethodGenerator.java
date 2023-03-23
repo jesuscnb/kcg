@@ -29,10 +29,9 @@ public class MethodGenerator {
             methods.add(
                     MethodSpec
                             .methodBuilder("set" + name)
-                            .addParameter(s.type, "name")
+                            .addParameter(s.type, s.name)
                             .addModifiers(Modifier.PUBLIC)
-                            .returns(s.type)
-                            .addStatement("this." + name + " = "+ name)
+                            .addStatement("this." + s.name + " = "+ s.name)
                             .build()
             );
 

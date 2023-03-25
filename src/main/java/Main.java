@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import generators.ClassGeneration;
+import generators.RulesGenerator;
 import pojos.DevPoolClass;
 
 import java.io.IOException;
@@ -26,9 +27,12 @@ public class Main {
         /**
          * Gerador de resource
          */
-
         classGenerator.constructResource(classe);
 
+        /**
+         * Gerador de rules
+         */
+        RulesGenerator.init().run(classe);
 
     }
 
@@ -48,7 +52,8 @@ public class Main {
                 			"name": "descricao",
                 			"type": "string",
                 			"indexed": true,           			
-                			"unique": false
+                			"unique": false,
+                			"required": true
                 		}
                 	]
                 }                                                             

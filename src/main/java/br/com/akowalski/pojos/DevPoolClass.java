@@ -1,4 +1,4 @@
-package pojos;
+package br.com.akowalski.pojos;
 
 import java.util.Set;
 

@@ -22,7 +22,7 @@ public class ClassGeneration {
         return new ClassGeneration();
     }
 
-    public void contrucEntity(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile contrucEntity(DevPoolClass devPoolClass) throws IOException {
         Set<FieldSpec> fields = fielGenerator.construct(devPoolClass.attributes());
         Set<MethodSpec> methods = MethodGenerator.init().constructGettersAndSetters(fields);
         TypeSpec typeSpec = TypeSpec.classBuilder(devPoolClass.name())
@@ -35,17 +35,15 @@ public class ClassGeneration {
                 .addMethods(methods)
                 .build();
 
-        JavaFile file = JavaFile
+        return JavaFile
                 .builder(devPoolClass.packageName() + ".models", typeSpec)
                 .indent(FOUR_WHITESPACES)
                 .build();
 
-        FileUtils.writeToOutputFile(file);
-
     }
 
 
-    public void constructService(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile constructService(DevPoolClass devPoolClass) throws IOException {
         String entityName = StringUtils.capitalize(devPoolClass.name());
         String name = entityName + "Service";
         ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".models." + devPoolClass.name());
@@ -65,16 +63,16 @@ public class ClassGeneration {
                 .addMethod(instance)
                 .build();
 
-        JavaFile file = JavaFile
+        return JavaFile
                 .builder(devPoolClass.packageName() + ".service", typeSpec)
                 .indent(FOUR_WHITESPACES)
                 .build();
 
-        FileUtils.writeToOutputFile(file);
+
     }
 
 
-    public void constructResource(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile constructResource(DevPoolClass devPoolClass) throws IOException {
         String name = StringUtils.capitalize(devPoolClass.name());
         String resourceName = devPoolClass.name().concat("Resource");
         String serviceName = devPoolClass.name().concat("Service");
@@ -121,13 +119,13 @@ public class ClassGeneration {
                 .addField(fiedlService)
                 .build();
 
-        JavaFile file = JavaFile
+        return JavaFile
                 .builder(devPoolClass.packageName() + ".resource", typeSpec)
                 .addStaticImport(spark.Spark.class,"post", "put", "delete", "get", "path")
                 .indent(FOUR_WHITESPACES)
                 .build();
 
-        FileUtils.writeToOutputFile(file);
+
     }
 
 }

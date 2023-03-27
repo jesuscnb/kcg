@@ -28,7 +28,7 @@ public class RulesGenerator {
         return new RulesGenerator();
     }
 
-    public void run(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile run(DevPoolClass devPoolClass) throws IOException {
 
         String entityName = StringUtils.capitalize(devPoolClass.name());
         String name = entityName + "Rules";
@@ -77,12 +77,11 @@ public class RulesGenerator {
                 .addMethods(methods)
                 .build();
 
-        JavaFile file = JavaFile
+        return JavaFile
                 .builder(devPoolClass.packageName() + ".rules", typeSpec)
                 .indent(FOUR_WHITESPACES)
                 .build();
 
-        FileUtils.writeToOutputFile(file);
 
     }
 

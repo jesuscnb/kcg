@@ -3,7 +3,7 @@
 mvn clean install
 
 jpackage --copyright "Copyright kcode 2023, All rights reserved" --input target/ --dest . \
---name kcode --main-jar dev-pool-1.0.0-jar-with-dependencies.jar --main-class br.com.akowalski.Main \
+--name kcode --main-jar kcode-1.0.0-jar-with-dependencies.jar --main-class br.com.akowalski.Main \
 --type deb --app-version 1.0.0
 
 sudo dpkg -i kcode*.deb

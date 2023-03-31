@@ -11,12 +11,14 @@ import com.squareup.javapoet.TypeSpec;
 import org.apache.commons.lang3.StringUtils;
 import br.com.akowalski.pojos.DevPoolAttribute;
 import br.com.akowalski.pojos.DevPoolClass;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 public class RulesGenerator {
@@ -34,7 +36,7 @@ public class RulesGenerator {
         ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".models." + devPoolClass.name());
 
         CodeBlock.Builder code = CodeBlock.builder();
-        code.addStatement("this.rules = new HashSet<>()");
+        code.addStatement("this.rules = new $T<>()", ParameterizedTypeName.get(HashSet.class));
 
         List<MethodSpec> methods = new ArrayList<>();
 
@@ -47,10 +49,10 @@ public class RulesGenerator {
                         .addParameter(getFieldType(s), "value")
                         .addCode(CodeBlock.builder()
                                 .beginControlFlow("this.rules.add(new $T(() -> ", ParameterizedTypeName.get(ResultRuleHolder.class))
-                                .beginControlFlow("if (StringUtils.isEmpty(value)) ")
-                                .addStatement("return Pair.of(false, \"O campo " + s.name().toLowerCase() + " é obrigatório\")")
+                                .beginControlFlow("if ($T.isEmpty(value)) ", ParameterizedTypeName.get(StringUtils.class))
+                                .addStatement("return $T.of(false, \"O campo " + s.name().toLowerCase() + " é obrigatório\")", ParameterizedTypeName.get(Pair.class))
                                 .endControlFlow()
-                                .addStatement("return Pair.of(true, null)")
+                                .addStatement("return $T.of(true, null)", ParameterizedTypeName.get(Pair.class))
                                 .endControlFlow("))")
                                 .addStatement("return this")
                                 .build())

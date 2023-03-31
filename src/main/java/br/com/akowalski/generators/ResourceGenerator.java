@@ -1,12 +1,17 @@
 package br.com.akowalski.generators;
 
 import br.com.akowalski.pojos.DevPoolClass;
+import br.com.docvirtus.commons.config.Config;
+import br.com.docvirtus.commons.transform.JsonTransform;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
@@ -27,7 +32,7 @@ public class ResourceGenerator {
         MethodSpec init = MethodSpec.methodBuilder("init")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addCode(CodeBlock.builder()
-                        .addStatement("new " + resourceName + ".init()")
+                        .addStatement("new " + resourceName + "()")
                         .build())
                 .build();
 
@@ -42,9 +47,9 @@ public class ResourceGenerator {
 
         CodeBlock resources = CodeBlock
                 .builder()
-                .add("path(Config.get().SERVER_PATH + \"/" + devPoolClass.name().toLowerCase() + "\" , () -> {\n").indent()
-                .add("post(\"\", (request, response) -> service.save(gson.fromJson(request.body(), " + entityClass.simpleName() + ".class)), JsonTransform::response ); \n")
-                .add("put(\"/:id\", (request, response) -> service.update(gson.fromJson(request.body(), " + entityClass.simpleName() + ".class),request.params(\":id\")), JsonTransform::response ); \n")
+                .add("path($T.get().SERVER_PATH + \"/" + devPoolClass.name().toLowerCase() + "\" , () -> {\n", ParameterizedTypeName.get(Config.class)).indent()
+                .add("post(\"\", (request, response) -> service.save(JsonTransform.gson().fromJson(request.body(), $T.class)), JsonTransform::response ); \n", entityClass)
+                .add("put(\"/:id\", (request, response) -> service.update($T.gson().fromJson(request.body(), $T.class),request.params(\":id\")), JsonTransform::response ); \n", ParameterizedTypeName.get(JsonTransform.class), entityClass)
                 .add("get(\"\", (request, response) -> service.findAll(), JsonTransform::response ); \n")
                 .add("get(\"/:id\", (request, response) -> service.findById(request.params(\":id\")), JsonTransform::response ); \n")
                 .add("delete(\"/:id\", (request, response) -> service.delete(request.params(\":id\")), JsonTransform::response ); \n").unindent()
@@ -59,8 +64,8 @@ public class ResourceGenerator {
 
         TypeSpec typeSpec = TypeSpec.classBuilder(resourceName)
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod(init)
                 .addMethod(contructor)
+                .addMethod(init)
                 .addField(fiedlService)
                 .build();
 

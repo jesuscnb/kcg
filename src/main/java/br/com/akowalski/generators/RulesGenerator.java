@@ -11,7 +11,6 @@ import com.squareup.javapoet.TypeSpec;
 import org.apache.commons.lang3.StringUtils;
 import br.com.akowalski.pojos.DevPoolAttribute;
 import br.com.akowalski.pojos.DevPoolClass;
-import br.com.akowalski.utils.FileUtils;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class RulesGenerator {
         return new RulesGenerator();
     }
 
-    public JavaFile run(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile construct(DevPoolClass devPoolClass) throws IOException {
 
         String entityName = StringUtils.capitalize(devPoolClass.name());
         String name = entityName + "Rules";

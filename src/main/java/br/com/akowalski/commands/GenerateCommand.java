@@ -1,9 +1,11 @@
 package br.com.akowalski.commands;
 
 
+import br.com.akowalski.generators.EntityGenerator;
+import br.com.akowalski.generators.ResourceGenerator;
+import br.com.akowalski.generators.ServiceGenerator;
 import br.com.akowalski.utils.FileUtils;
 import com.google.gson.Gson;
-import br.com.akowalski.generators.ClassGeneration;
 import br.com.akowalski.generators.RulesGenerator;
 import com.squareup.javapoet.JavaFile;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-@Command(name = "kcode", aliases = {"kc"}, mixinStandardHelpOptions = true, version = "Kowalski Code Generator 1.0.0",
+@Command(name = "kcg", aliases = {"kcg"}, mixinStandardHelpOptions = true, version = "Kowalski Code Generator 1.0.0",
         description = "Generate Default CRUD implementations for Java and MongoDB")
 public class GenerateCommand implements Runnable {
 
@@ -60,13 +62,12 @@ public class GenerateCommand implements Runnable {
 
 
             DevPoolClass classe = gson.fromJson(template, DevPoolClass.class);
-            ClassGeneration classGenerator = ClassGeneration.init();
 
             /**
              * Gerando entity
              */
             if (!exclude.contains(Modulues.E)) {
-                JavaFile contrucEntity = classGenerator.contrucEntity(classe);
+                JavaFile contrucEntity = EntityGenerator.init().contruct(classe);
                 FileUtils.writeToOutputFile(contrucEntity, output);
             }
 
@@ -74,7 +75,7 @@ public class GenerateCommand implements Runnable {
              * Gerador service com Abstract
              */
             if (!exclude.contains(Modulues.S)) {
-                JavaFile constructService = classGenerator.constructService(classe);
+                JavaFile constructService = ServiceGenerator.init().construct(classe);
                 FileUtils.writeToOutputFile(constructService, output);
             }
 
@@ -82,7 +83,7 @@ public class GenerateCommand implements Runnable {
              * Gerador de resource
              */
             if (!exclude.contains(Modulues.C)) {
-                JavaFile construcResource = classGenerator.constructResource(classe);
+                JavaFile construcResource = ResourceGenerator.init().construct(classe);
                 FileUtils.writeToOutputFile(construcResource, output);
             }
 
@@ -90,7 +91,7 @@ public class GenerateCommand implements Runnable {
              * Gerador de rules
              */
             if (!exclude.contains(Modulues.R)) {
-                JavaFile generateRules = RulesGenerator.init().run(classe);
+                JavaFile generateRules = RulesGenerator.init().construct(classe);
                 FileUtils.writeToOutputFile(generateRules, output);
             }
 

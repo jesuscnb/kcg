@@ -3,14 +3,14 @@
 mvn clean install
 
 jpackage --copyright "Copyright kcode 2023, All rights reserved" --input target/ --dest . \
---name kcode --main-jar kcode-1.0.0-jar-with-dependencies.jar --main-class br.com.akowalski.Main \
+--name kcg --main-jar kcg-1.0.0-jar-with-dependencies.jar --main-class br.com.akowalski.Main \
 --type deb --app-version 1.0.0
 
-sudo dpkg -i kcode*.deb
+sudo dpkg -i kcg*.deb
 
-sudo ln -s /opt/kcode/bin/kcode /usr/bin/kcode
-sudo chmod +x /usr/bin/kcode
+sudo ln -s /opt/kcode/bin/kcg /usr/bin/kcg
+sudo chmod +x /usr/bin/kcg
 
-rm kcode*.deb
+rm kcg*.deb
 
 

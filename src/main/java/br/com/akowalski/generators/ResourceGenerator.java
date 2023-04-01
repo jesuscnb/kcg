@@ -1,5 +1,6 @@
 package br.com.akowalski.generators;
 
+import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.DevPoolClass;
 import br.com.docvirtus.commons.config.Config;
 import br.com.docvirtus.commons.transform.JsonTransform;
@@ -72,6 +73,7 @@ public class ResourceGenerator {
         return JavaFile
                 .builder(devPoolClass.packageName() + ".resource", typeSpec)
                 .addStaticImport(spark.Spark.class, "post", "put", "delete", "get", "path")
+                .indent(Messages.FOUR_WHITESPACES)
                 .build();
 
     }

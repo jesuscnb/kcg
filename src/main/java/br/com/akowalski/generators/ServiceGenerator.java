@@ -1,5 +1,6 @@
 package br.com.akowalski.generators;
 
+import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.DevPoolClass;
 import br.com.docvirtus.commons.service.AbstractService;
 import com.squareup.javapoet.ClassName;
@@ -38,6 +39,7 @@ public class ServiceGenerator {
 
         return JavaFile
                 .builder(devPoolClass.packageName() + ".service", typeSpec)
+                .indent(Messages.FOUR_WHITESPACES)
                 .build();
 
     }

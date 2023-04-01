@@ -1,0 +1,60 @@
+{
+  "name": "Product",
+  "serializedName": "product",
+  "packageName": "br.com.demo",
+  "attributes": [
+    {
+      "name": "id",
+      "type": "objectid"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "rules": [
+        "notNull",
+        "maxSize=150"
+      ]
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "rules": [
+        "maxSize=150"
+      ]
+    },
+    {
+      "name": "price",
+      "type": "bigdecimal",
+      "rules": [
+        "notNull",
+        "minSize=0.1",
+        "maxSize=10.2"
+      ]
+    },
+    {
+      "name": "validTime",
+      "type": "date",
+      "rules": [
+        "notNull",
+        "minDate=01/01/1972",
+        "maxDate=now"
+      ]
+    },
+    {
+      "name": "amount",
+      "type": "int",
+      "rules": [
+        "notNull",
+        "minSize=1",
+        "maxSize=1000"
+      ]
+    },
+    {
+      "name": "active",
+      "type": "boolean",
+      "rules": [
+        "notNull"
+      ]
+    }
+  ]
+}

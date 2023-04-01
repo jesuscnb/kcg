@@ -33,12 +33,13 @@ public class FielGenerator {
         switch (attribute.type().toLowerCase()) {
             case "boolean":
             case "bool":
-                return FieldSpec.builder(Boolean.class, attribute.name())
+                return FieldSpec.builder(boolean.class, attribute.name())
                         .addModifiers(Modifier.PRIVATE)
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .build();
             case "integer":
-                return FieldSpec.builder(Integer.class, attribute.name())
+            case "int":
+                return FieldSpec.builder(int.class, attribute.name())
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .addModifiers(Modifier.PRIVATE)
                         .build();
@@ -48,7 +49,7 @@ public class FielGenerator {
                         .addModifiers(Modifier.PRIVATE)
                         .build();
             case "double":
-                return FieldSpec.builder(Double.class, attribute.name())
+                return FieldSpec.builder(double.class, attribute.name())
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .addModifiers(Modifier.PRIVATE)
                         .build();

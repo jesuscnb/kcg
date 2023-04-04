@@ -195,7 +195,8 @@ public class RulesGenerator {
             String value = maxDate.get();
 
             if (value.contains("now")) {
-                builder.beginControlFlow("if (inputDate.isBefore(LocalDate.now()))");
+                builder.beginControlFlow("if (inputDate.isAfter(LocalDate.now()))");
+                value = "now";
             } else {
                 value = value.split("=")[1];
 

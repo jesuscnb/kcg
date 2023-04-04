@@ -38,7 +38,7 @@ public class ServiceGenerator {
                 .build();
 
         return JavaFile
-                .builder(devPoolClass.packageName() + ".service", typeSpec)
+                .builder(devPoolClass.packageName() + ".services", typeSpec)
                 .indent(Messages.FOUR_WHITESPACES)
                 .build();
 

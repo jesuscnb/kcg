@@ -27,7 +27,7 @@ public class ResourceGenerator {
     public JavaFile construct(DevPoolClass devPoolClass) throws IOException {
         String resourceName = devPoolClass.name().concat("Resource");
         String serviceName = devPoolClass.name().concat("Service");
-        ClassName className = ClassName.bestGuess(devPoolClass.packageName() + ".service." + serviceName);
+        ClassName className = ClassName.bestGuess(devPoolClass.packageName() + ".services." + serviceName);
         ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".models." + devPoolClass.name());
 
         MethodSpec init = MethodSpec.methodBuilder("init")
@@ -71,7 +71,7 @@ public class ResourceGenerator {
                 .build();
 
         return JavaFile
-                .builder(devPoolClass.packageName() + ".resource", typeSpec)
+                .builder(devPoolClass.packageName() + ".resources", typeSpec)
                 .addStaticImport(spark.Spark.class, "post", "put", "delete", "get", "path")
                 .indent(Messages.FOUR_WHITESPACES)
                 .build();

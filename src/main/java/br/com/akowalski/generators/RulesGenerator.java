@@ -31,8 +31,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static br.com.akowalski.constants.Messages.FOUR_WHITESPACES;
+import static br.com.akowalski.utils.MessageFormatUtils.Type.EMAIL;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_DATE;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_SIZE;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.MIN_DATE;
@@ -99,7 +102,8 @@ public class RulesGenerator {
 
     public CodeBlock createRule(Class<?> type, String fieldName, List<String> rules) {
         CodeBlock.Builder builder = CodeBlock.builder();
-        builder.beginControlFlow("this.rules.add(new $T(() -> ", ParameterizedTypeName.get(ResultRuleHolder.class));
+        builder.beginControlFlow("this.rules.add(new $T(() -> ", ParameterizedTypeName.get(ResultRuleHolder.class))
+                .add("\n");
 
         Optional<String> notNull = rules.stream().filter(s -> s.equalsIgnoreCase("notNull")).findFirst();
         if (notNull.isPresent()) {
@@ -194,22 +198,31 @@ public class RulesGenerator {
 
             String value = maxDate.get();
 
+            if (minDate.isEmpty()) {
+                builder.add("$T inputDate = value.toInstant() \n", ParameterizedTypeName.get(LocalDate.class))
+                        .indent()
+                        .add(".atZone($T.systemDefault()) \n", ParameterizedTypeName.get(ZoneId.class))
+                        .addStatement(".toLocalDate()").add("\n")
+                        .unindent();
+            }
+
             if (value.contains("now")) {
                 builder.beginControlFlow("if (inputDate.isAfter(LocalDate.now()))");
                 value = "now";
             } else {
                 value = value.split("=")[1];
 
-                if (minDate.isEmpty()) {
-                    builder.add("$T inputDate = value.toInstant() \n", ParameterizedTypeName.get(LocalDate.class))
-                            .add(".atZone($T.systemDefault()) \n", ParameterizedTypeName.get(ZoneId.class))
-                            .addStatement(".toLocalDate()");
-                }
-
                 builder.beginControlFlow("if (inputDate.isAfter(LocalDate.parse(\"" + value + "\")))");
             }
 
             builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(MAX_DATE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
+                    .endControlFlow().add("\n");
+        }
+
+        Optional<String> email = rules.stream().filter(s -> s.contains("email")).findFirst();
+        if (email.isPresent()) {
+            builder.beginControlFlow("if (!value.contains(\"@\"))");
+            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(EMAIL, fieldName) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 

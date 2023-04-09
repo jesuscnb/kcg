@@ -18,6 +18,7 @@ public class MethodGenerator {
         Set<MethodSpec> methods = new HashSet<>();
         fiels.forEach(s -> {
             String name = StringUtils.capitalize(s.name);
+
             methods.add(
                     MethodSpec
                             .methodBuilder("get" + name)

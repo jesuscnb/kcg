@@ -2,11 +2,13 @@ package br.com.akowalski.commands;
 
 
 import br.com.akowalski.generators.EntityGenerator;
+import br.com.akowalski.generators.EnumerateGenerator;
 import br.com.akowalski.generators.ResourceGenerator;
 import br.com.akowalski.generators.ServiceGenerator;
 import br.com.akowalski.utils.FileUtils;
 import com.google.gson.Gson;
 import br.com.akowalski.generators.RulesGenerator;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.JavaFile;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import picocli.CommandLine.ArgGroup;
@@ -60,39 +62,48 @@ public class GenerateCommand implements Runnable {
                 template = args.json;
             }
 
+            List<DevPoolClass> classes = gson.fromJson(template, new TypeToken<ArrayList<DevPoolClass>>(){}.getType());
 
-            DevPoolClass classe = gson.fromJson(template, DevPoolClass.class);
+            for (DevPoolClass classe : classes) {
 
-            /**
-             * Gerando entity
-             */
-            if (!exclude.contains(Modulues.E)) {
-                JavaFile contrucEntity = EntityGenerator.init().contruct(classe);
-                FileUtils.writeToOutputFile(contrucEntity, output);
-            }
+                if (Objects.nonNull(classe.type()) && classe.type().equalsIgnoreCase("E")) {
+                    JavaFile contrucEntity = EnumerateGenerator.init().contruct(classe);
+                    FileUtils.writeToOutputFile(contrucEntity, output);
+                    continue;
+                }
 
-            /**
-             * Gerador service com Abstract
-             */
-            if (!exclude.contains(Modulues.S)) {
-                JavaFile constructService = ServiceGenerator.init().construct(classe);
-                FileUtils.writeToOutputFile(constructService, output);
-            }
+                /**
+                 * Gerando entity
+                 */
+                if (!exclude.contains(Modulues.E)) {
+                    JavaFile contrucEntity = EntityGenerator.init().contruct(classe);
+                    FileUtils.writeToOutputFile(contrucEntity, output);
+                }
 
-            /**
-             * Gerador de resource
-             */
-            if (!exclude.contains(Modulues.C)) {
-                JavaFile construcResource = ResourceGenerator.init().construct(classe);
-                FileUtils.writeToOutputFile(construcResource, output);
-            }
+                /**
+                 * Gerador service com Abstract
+                 */
+                if (!exclude.contains(Modulues.S)) {
+                    JavaFile constructService = ServiceGenerator.init().construct(classe);
+                    FileUtils.writeToOutputFile(constructService, output);
+                }
 
-            /**
-             * Gerador de rules
-             */
-            if (!exclude.contains(Modulues.R)) {
-                JavaFile generateRules = RulesGenerator.init().construct(classe);
-                FileUtils.writeToOutputFile(generateRules, output);
+                /**
+                 * Gerador de resource
+                 */
+                if (!exclude.contains(Modulues.C)) {
+                    JavaFile construcResource = ResourceGenerator.init().construct(classe);
+                    FileUtils.writeToOutputFile(construcResource, output);
+                }
+
+                /**
+                 * Gerador de rules
+                 */
+                if (!exclude.contains(Modulues.R)) {
+                    JavaFile generateRules = RulesGenerator.init().construct(classe);
+                    FileUtils.writeToOutputFile(generateRules, output);
+                }
+
             }
 
         } catch (Exception e) {

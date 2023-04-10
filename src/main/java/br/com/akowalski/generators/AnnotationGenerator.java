@@ -1,8 +1,8 @@
 package br.com.akowalski.generators;
 
+import br.com.akowalski.pojos.KcgAttribute;
 import com.google.gson.annotations.SerializedName;
 import com.squareup.javapoet.AnnotationSpec;
-import br.com.akowalski.pojos.DevPoolAttribute;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -14,7 +14,7 @@ public class AnnotationGenerator {
         return new AnnotationGenerator();
     }
 
-    public Set<AnnotationSpec> addAnnotationsOnEntityFields(DevPoolAttribute attribute) {
+    public Set<AnnotationSpec> addAnnotationsOnEntityFields(KcgAttribute attribute) {
         Set<AnnotationSpec> anottations = new HashSet<>();
 
         if (Objects.nonNull(attribute.serializedName())) {

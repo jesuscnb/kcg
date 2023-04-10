@@ -1,6 +1,7 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.pojos.DevPoolClass;
+import br.com.akowalski.pojos.KcgAttribute;
+import br.com.akowalski.pojos.KcgClass;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -8,14 +9,12 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import org.bson.BsonType;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonRepresentation;
-import br.com.akowalski.pojos.DevPoolAttribute;
 
 import javax.lang.model.element.Modifier;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class FieldGenerator {
 
@@ -24,17 +23,23 @@ public class FieldGenerator {
     public static FieldGenerator init() {
         return new FieldGenerator();
     }
-    public Set<FieldSpec> construct(DevPoolClass devPoolClass) {
-        Set<FieldSpec> fiels = new HashSet<>();
-        for (DevPoolAttribute s : devPoolClass.attributes()) {
-            fiels.add(contruct(s, devPoolClass.packageName()));
+
+    public List<FieldSpec> construct(KcgClass kcgClass) {
+        List<FieldSpec> fiels = new ArrayList<>();
+        for (KcgAttribute s : kcgClass.attributes()) {
+            fiels.add(contruct(s, kcgClass.packageName()));
         }
         return fiels;
     }
 
-    public FieldSpec contruct(DevPoolAttribute attribute, String packageName) {
+    public FieldSpec contruct(KcgAttribute attribute, String packageName) {
 
         switch (attribute.type().toLowerCase()) {
+            case "string":
+                return FieldSpec.builder(String.class, attribute.name())
+                        .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
+                        .addModifiers(Modifier.PRIVATE)
+                        .build();
             case "boolean":
             case "bool":
                 return FieldSpec.builder(boolean.class, attribute.name())
@@ -76,18 +81,12 @@ public class FieldGenerator {
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .addModifiers(Modifier.PRIVATE)
                         .build();
-            case "enum":
-            case "enumerate":
-                ClassName enumClass = ClassName.bestGuess(packageName + ".enumerates." + attribute.element());
-                return FieldSpec.builder(enumClass, attribute.name())
-                        .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
-                        .addModifiers(Modifier.PRIVATE)
-                        .build();
             default:
-                return FieldSpec.builder(String.class, attribute.name())
+                return FieldSpec.builder(ClassName.bestGuess( attribute.type()), attribute.name())
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .addModifiers(Modifier.PRIVATE)
                         .build();
+
         }
 
     }

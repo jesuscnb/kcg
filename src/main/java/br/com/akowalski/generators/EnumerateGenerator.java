@@ -1,8 +1,8 @@
 package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
-import br.com.akowalski.pojos.DevPoolAttribute;
-import br.com.akowalski.pojos.DevPoolClass;
+import br.com.akowalski.pojos.KcgAttribute;
+import br.com.akowalski.pojos.KcgClass;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -15,15 +15,15 @@ public class EnumerateGenerator {
         return new EnumerateGenerator();
     }
 
-    public JavaFile contruct(DevPoolClass devPoolClass) {
+    public JavaFile contruct(KcgClass clazz) {
 
-        TypeSpec.Builder enumBuilder = TypeSpec.enumBuilder(devPoolClass.name());
-        for (DevPoolAttribute attribute : devPoolClass.attributes()) {
+        TypeSpec.Builder enumBuilder = TypeSpec.enumBuilder(clazz.name());
+        for (KcgAttribute attribute : clazz.attributes()) {
             enumBuilder.addEnumConstant(attribute.name());
         }
 
         return JavaFile
-                .builder(devPoolClass.packageName() + ".enumerates", enumBuilder.addModifiers(Modifier.PUBLIC).build())
+                .builder(clazz.packageName() + ".enumerates", enumBuilder.addModifiers(Modifier.PUBLIC).build())
                 .indent(Messages.FOUR_WHITESPACES)
                 .build();
 

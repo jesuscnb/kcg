@@ -2,7 +2,6 @@ package br.com.akowalski.commands;
 
 
 import br.com.akowalski.generators.EntityGenerator;
-import br.com.akowalski.generators.EnumerateGenerator;
 import br.com.akowalski.generators.ResourceGenerator;
 import br.com.akowalski.generators.ServiceGenerator;
 import br.com.akowalski.utils.FileUtils;
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import br.com.akowalski.pojos.DevPoolClass;
+import br.com.akowalski.pojos.KcgClass;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,15 +61,9 @@ public class GenerateCommand implements Runnable {
                 template = args.json;
             }
 
-            List<DevPoolClass> classes = gson.fromJson(template, new TypeToken<ArrayList<DevPoolClass>>(){}.getType());
+            List<KcgClass> classes = gson.fromJson(template, new TypeToken<ArrayList<KcgClass>>(){}.getType());
 
-            for (DevPoolClass classe : classes) {
-
-                if (Objects.nonNull(classe.type()) && classe.type().equalsIgnoreCase("E")) {
-                    JavaFile contrucEntity = EnumerateGenerator.init().contruct(classe);
-                    FileUtils.writeToOutputFile(contrucEntity, output);
-                    continue;
-                }
+            for (KcgClass classe : classes) {
 
                 /**
                  * Gerando entity

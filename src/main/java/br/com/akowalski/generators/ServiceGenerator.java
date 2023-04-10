@@ -1,7 +1,7 @@
 package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
-import br.com.akowalski.pojos.DevPoolClass;
+import br.com.akowalski.pojos.KcgClass;
 import br.com.docvirtus.commons.service.AbstractService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -19,10 +19,10 @@ public class ServiceGenerator {
         return new ServiceGenerator();
     }
 
-    public JavaFile construct(DevPoolClass devPoolClass) {
-        String entityName = StringUtils.capitalize(devPoolClass.name());
+    public JavaFile construct(KcgClass clazz) {
+        String entityName = StringUtils.capitalize(clazz.name());
         String name = entityName + "Service";
-        ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".models." + devPoolClass.name());
+        ClassName entityClass = ClassName.bestGuess(clazz.packageName() + ".models." + clazz.name());
 
         MethodSpec instance = MethodSpec.methodBuilder("init")
                 .addModifiers(Modifier.PUBLIC)
@@ -38,7 +38,7 @@ public class ServiceGenerator {
                 .build();
 
         return JavaFile
-                .builder(devPoolClass.packageName() + ".services", typeSpec)
+                .builder(clazz.packageName() + ".services", typeSpec)
                 .indent(Messages.FOUR_WHITESPACES)
                 .build();
 

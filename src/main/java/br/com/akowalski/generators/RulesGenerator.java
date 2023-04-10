@@ -1,6 +1,7 @@
 package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
+import br.com.akowalski.pojos.KcgAttribute;
 import br.com.akowalski.utils.MessageFormatUtils;
 import br.com.docvirtus.commons.rules.AbstractRules;
 import br.com.docvirtus.commons.rules.ResultRuleHolder;
@@ -11,30 +12,22 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.apache.commons.lang3.StringUtils;
-import br.com.akowalski.pojos.DevPoolAttribute;
-import br.com.akowalski.pojos.DevPoolClass;
+import br.com.akowalski.pojos.KcgClass;
 import org.apache.commons.lang3.compare.ComparableUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static br.com.akowalski.constants.Messages.FOUR_WHITESPACES;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.EMAIL;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_DATE;
 import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_SIZE;
@@ -48,11 +41,11 @@ public class RulesGenerator {
         return new RulesGenerator();
     }
 
-    public JavaFile construct(DevPoolClass devPoolClass) throws IOException {
+    public JavaFile construct(KcgClass clazz) {
 
-        String entityName = StringUtils.capitalize(devPoolClass.name());
+        String entityName = StringUtils.capitalize(clazz.name());
         String name = entityName + "Rules";
-        ClassName entityClass = ClassName.bestGuess(devPoolClass.packageName() + ".models." + devPoolClass.name());
+        ClassName entityClass = ClassName.bestGuess(clazz.packageName() + ".models." + clazz.name());
 
         CodeBlock.Builder code = CodeBlock.builder();
         code.addStatement("this.rules = new $T<>()", ParameterizedTypeName.get(HashSet.class));
@@ -60,13 +53,13 @@ public class RulesGenerator {
         List<MethodSpec> methods = new ArrayList<>();
 
 
-        devPoolClass.attributes().stream().forEach(s -> {
+        clazz.attributes().stream().forEach(s -> {
             if (Objects.nonNull(s.rules())) {
                 Class<?> type = getFieldType(s);
 
                 MethodSpec rules = MethodSpec.methodBuilder(s.name().toLowerCase())
                         .addModifiers(Modifier.PUBLIC)
-                        .returns(ClassName.bestGuess(devPoolClass.packageName() + ".rules." + name))
+                        .returns(ClassName.bestGuess(clazz.packageName() + ".rules." + name))
                         .addParameter(type, "value")
                         .addCode(createRule(type, s.name(), s.rules()))
                         .build();
@@ -93,7 +86,7 @@ public class RulesGenerator {
                 .build();
 
         return JavaFile
-                .builder(devPoolClass.packageName() + ".rules", typeSpec)
+                .builder(clazz.packageName() + ".rules", typeSpec)
                 .indent(Messages.FOUR_WHITESPACES)
                 .build();
 
@@ -234,7 +227,7 @@ public class RulesGenerator {
     }
 
 
-    public Class<?> getFieldType(DevPoolAttribute attribute) {
+    public Class<?> getFieldType(KcgAttribute attribute) {
 
         switch (attribute.type().toLowerCase()) {
             case "boolean":

@@ -5,7 +5,9 @@ import com.squareup.javapoet.MethodSpec;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MethodGenerator {
@@ -14,8 +16,8 @@ public class MethodGenerator {
         return new MethodGenerator();
     }
 
-    public Set<MethodSpec> constructGettersAndSetters(Set<FieldSpec> fiels) {
-        Set<MethodSpec> methods = new HashSet<>();
+    public List<MethodSpec> constructGettersAndSetters(List<FieldSpec> fiels) {
+        List<MethodSpec> methods = new ArrayList<>();
         fiels.forEach(s -> {
             String name = StringUtils.capitalize(s.name);
 

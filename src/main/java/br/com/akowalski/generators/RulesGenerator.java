@@ -1,10 +1,10 @@
 package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
-import br.com.akowalski.pojos.KcgAttribute;
-import br.com.akowalski.utils.MessageFormatUtils;
-import br.com.docvirtus.commons.rules.AbstractRules;
-import br.com.docvirtus.commons.rules.ResultRuleHolder;
+import br.com.akowalski.helpers.MessageHelper;
+import br.com.akowalski.helpers.TypeHelper;
+import br.com.docvirtus.commons.data.rules.AbstractRules;
+import br.com.docvirtus.commons.rest.share.rules.ResultRuleHolder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
@@ -17,23 +17,21 @@ import org.apache.commons.lang3.compare.ComparableUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.lang.model.element.Modifier;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static br.com.akowalski.utils.MessageFormatUtils.Type.EMAIL;
-import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_DATE;
-import static br.com.akowalski.utils.MessageFormatUtils.Type.MAX_SIZE;
-import static br.com.akowalski.utils.MessageFormatUtils.Type.MIN_DATE;
-import static br.com.akowalski.utils.MessageFormatUtils.Type.MIN_SIZE;
-import static br.com.akowalski.utils.MessageFormatUtils.Type.NOT_NULL;
+import static br.com.akowalski.helpers.MessageHelper.Type.EMAIL;
+import static br.com.akowalski.helpers.MessageHelper.Type.MAX_DATE;
+import static br.com.akowalski.helpers.MessageHelper.Type.MAX_SIZE;
+import static br.com.akowalski.helpers.MessageHelper.Type.MIN_DATE;
+import static br.com.akowalski.helpers.MessageHelper.Type.MIN_SIZE;
+import static br.com.akowalski.helpers.MessageHelper.Type.NOT_NULL;
 
 public class RulesGenerator {
 
@@ -41,7 +39,7 @@ public class RulesGenerator {
         return new RulesGenerator();
     }
 
-    public JavaFile construct(KcgClass clazz) {
+    public JavaFile build(KcgClass clazz) {
 
         String entityName = StringUtils.capitalize(clazz.name());
         String name = entityName + "Rules";
@@ -53,9 +51,9 @@ public class RulesGenerator {
         List<MethodSpec> methods = new ArrayList<>();
 
 
-        clazz.attributes().stream().forEach(s -> {
+        clazz.attributes().forEach(s -> {
             if (Objects.nonNull(s.rules())) {
-                Class<?> type = getFieldType(s);
+                Class<?> type = TypeHelper.get(s.type());
 
                 MethodSpec rules = MethodSpec.methodBuilder(s.name().toLowerCase())
                         .addModifiers(Modifier.PUBLIC)
@@ -66,7 +64,6 @@ public class RulesGenerator {
 
                 methods.add(rules);
                 code.addStatement("this." + s.name().toLowerCase() + "(entity.get" + StringUtils.capitalize(s.name()) + "())");
-
 
             }
         });
@@ -107,7 +104,7 @@ public class RulesGenerator {
                 builder.beginControlFlow("if ($T.isNull(value)) ", ParameterizedTypeName.get(Objects.class));
             }
 
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(NOT_NULL, fieldName) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(NOT_NULL, fieldName) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 
@@ -133,7 +130,7 @@ public class RulesGenerator {
                 builder.beginControlFlow("if ($T.is(value).greaterThan(" + min + "))", ParameterizedTypeName.get(ComparableUtils.class));
             }
 
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(MAX_SIZE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(MAX_SIZE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
 
         }
@@ -155,11 +152,11 @@ public class RulesGenerator {
                 builder.beginControlFlow("if ($T.is(value).lessThan(new BigDecimal(" + min + ")))", ParameterizedTypeName.get(ComparableUtils.class));
 
             } else if (Objects.equals(type, double.class)) {
-                double min = Double.valueOf(value);
+                double min = Double.parseDouble(value);
                 builder.beginControlFlow("if ($T.is(value).lessThan(" + min + "))", ParameterizedTypeName.get(ComparableUtils.class));
             }
 
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(MIN_SIZE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(MIN_SIZE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 
@@ -181,7 +178,7 @@ public class RulesGenerator {
                         .beginControlFlow("if (inputDate.isBefore(LocalDate.parse(\"" + value + "\")))");
             }
 
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(MIN_DATE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(MIN_DATE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 
@@ -208,14 +205,14 @@ public class RulesGenerator {
                 builder.beginControlFlow("if (inputDate.isAfter(LocalDate.parse(\"" + value + "\")))");
             }
 
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(MAX_DATE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(MAX_DATE, fieldName, value) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 
         Optional<String> email = rules.stream().filter(s -> s.contains("email")).findFirst();
         if (email.isPresent()) {
             builder.beginControlFlow("if (!value.contains(\"@\"))");
-            builder.addStatement("return $T.of(false, \"" + MessageFormatUtils.format(EMAIL, fieldName) + "\")", ParameterizedTypeName.get(Pair.class))
+            builder.addStatement("return $T.of(false, \"" + MessageHelper.format(EMAIL, fieldName) + "\")", ParameterizedTypeName.get(Pair.class))
                     .endControlFlow().add("\n");
         }
 
@@ -223,28 +220,6 @@ public class RulesGenerator {
                 .endControlFlow("))")
                 .addStatement("return this")
                 .build();
-
-    }
-
-
-    public Class<?> getFieldType(KcgAttribute attribute) {
-
-        switch (attribute.type().toLowerCase()) {
-            case "boolean":
-            case "bool":
-                return boolean.class;
-            case "integer":
-            case "int":
-                return int.class;
-            case "date":
-                return Date.class;
-            case "double":
-                return double.class;
-            case "bigdecimal":
-                return BigDecimal.class;
-            default:
-                return String.class;
-        }
 
     }
 

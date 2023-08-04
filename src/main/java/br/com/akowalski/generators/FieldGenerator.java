@@ -18,21 +18,21 @@ import java.util.List;
 
 public class FieldGenerator {
 
-    private AnnotationGenerator annotationGenerator = AnnotationGenerator.init();
+    private final AnnotationGenerator annotationGenerator = AnnotationGenerator.init();
 
     public static FieldGenerator init() {
         return new FieldGenerator();
     }
 
-    public List<FieldSpec> construct(KcgClass kcgClass) {
+    public List<FieldSpec> build(KcgClass kcgClass) {
         List<FieldSpec> fiels = new ArrayList<>();
         for (KcgAttribute s : kcgClass.attributes()) {
-            fiels.add(contruct(s, kcgClass.packageName()));
+            fiels.add(build(s, kcgClass.packageName()));
         }
         return fiels;
     }
 
-    public FieldSpec contruct(KcgAttribute attribute, String packageName) {
+    public FieldSpec build(KcgAttribute attribute, String packageName) {
 
         switch (attribute.type().toLowerCase()) {
             case "string":
@@ -82,7 +82,7 @@ public class FieldGenerator {
                         .addModifiers(Modifier.PRIVATE)
                         .build();
             default:
-                return FieldSpec.builder(ClassName.bestGuess( attribute.type()), attribute.name())
+                return FieldSpec.builder(ClassName.bestGuess(attribute.type()), attribute.name())
                         .addAnnotations(annotationGenerator.addAnnotationsOnEntityFields(attribute))
                         .addModifiers(Modifier.PRIVATE)
                         .build();

@@ -3,8 +3,8 @@ package br.com.akowalski.generators;
 import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.KcgClass;
 import br.com.akowalski.pojos.KcgSubClass;
-import br.com.docvirtus.commons.annotation.Entity;
-import br.com.docvirtus.commons.annotation.RulesListener;
+import br.com.docvirtus.commons.data.annotation.Entity;
+import br.com.docvirtus.commons.data.annotation.RulesListener;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -28,11 +28,12 @@ public class EntityGenerator {
     }
 
     public JavaFile contruct(KcgClass clazz) {
-        List<FieldSpec> fields = fielGenerator.construct(clazz);
+        List<FieldSpec> fields = fielGenerator.build(clazz);
         List<MethodSpec> methods = MethodGenerator.init().constructGettersAndSetters(fields);
         TypeSpec.Builder builer = TypeSpec.classBuilder(clazz.name());
 
         long attWithRules = clazz.attributes().stream().filter(s -> Objects.nonNull(s.rules())).count();
+
         if (attWithRules > 0) {
 
             ClassName rulesClass = ClassName.bestGuess(clazz.packageName() + ".rules." + clazz.name() + "Rules");
@@ -56,6 +57,25 @@ public class EntityGenerator {
                 builer.addModifiers(Modifier.PUBLIC).addType(enumBuilder.build());
             }
         }
+
+        methods.add(MethodSpec
+                .methodBuilder("equals")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(int.class)
+                .addStatement("if (this == o) return true")
+                .addStatement("if (o == null || getClass() != o.getClass()) return false;")
+                .addStatement(clazz.name() + " " + clazz.name().toLowerCase() + " = (" + clazz.name() + ") o")
+                .addStatement("return id.equals(" + clazz.name().toLowerCase() + ".id)")
+                .build());
+
+        methods.add(MethodSpec
+                .methodBuilder("hashCode")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(int.class)
+                .addStatement("Objects.hash(id)")
+                .build());
 
         TypeSpec typeSpec = builer.addModifiers(Modifier.PUBLIC)
                 .addAnnotation(AnnotationSpec.builder(Entity.class)

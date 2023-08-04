@@ -4,7 +4,7 @@ package br.com.akowalski.commands;
 import br.com.akowalski.generators.EntityGenerator;
 import br.com.akowalski.generators.ResourceGenerator;
 import br.com.akowalski.generators.ServiceGenerator;
-import br.com.akowalski.utils.FileUtils;
+import br.com.akowalski.helpers.FileHelper;
 import com.google.gson.Gson;
 import br.com.akowalski.generators.RulesGenerator;
 import com.google.gson.reflect.TypeToken;
@@ -35,7 +35,17 @@ public class GenerateCommand implements Runnable {
     }
 
     enum Modulues {
-        C, S, R, E
+        C("class"), S("service"), R("rules"), E("entity");
+
+        private String name;
+
+        Modulues(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     @ArgGroup(multiplicity = "1")
@@ -70,7 +80,7 @@ public class GenerateCommand implements Runnable {
                  */
                 if (!exclude.contains(Modulues.E)) {
                     JavaFile contrucEntity = EntityGenerator.init().contruct(classe);
-                    FileUtils.writeToOutputFile(contrucEntity, output);
+                    FileHelper.writeToOutputFile(contrucEntity, output);
                 }
 
                 /**
@@ -78,7 +88,7 @@ public class GenerateCommand implements Runnable {
                  */
                 if (!exclude.contains(Modulues.S)) {
                     JavaFile constructService = ServiceGenerator.init().construct(classe);
-                    FileUtils.writeToOutputFile(constructService, output);
+                    FileHelper.writeToOutputFile(constructService, output);
                 }
 
                 /**
@@ -86,15 +96,15 @@ public class GenerateCommand implements Runnable {
                  */
                 if (!exclude.contains(Modulues.C)) {
                     JavaFile construcResource = ResourceGenerator.init().construct(classe);
-                    FileUtils.writeToOutputFile(construcResource, output);
+                    FileHelper.writeToOutputFile(construcResource, output);
                 }
 
                 /**
                  * Gerador de rules
                  */
                 if (!exclude.contains(Modulues.R)) {
-                    JavaFile generateRules = RulesGenerator.init().construct(classe);
-                    FileUtils.writeToOutputFile(generateRules, output);
+                    JavaFile generateRules = RulesGenerator.init().build(classe);
+                    FileHelper.writeToOutputFile(generateRules, output);
                 }
 
             }

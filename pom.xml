@@ -21,7 +21,12 @@
         </dependency>
         <dependency>
             <groupId>br.com.docvirtus</groupId>
-            <artifactId>docvirtus-commons-native</artifactId>
+            <artifactId>docvirtus-commons-data</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>br.com.docvirtus</groupId>
+            <artifactId>docvirtus-commons-rest</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

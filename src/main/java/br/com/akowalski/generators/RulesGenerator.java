@@ -3,8 +3,9 @@ package br.com.akowalski.generators;
 import br.com.akowalski.constants.Messages;
 import br.com.akowalski.helpers.MessageHelper;
 import br.com.akowalski.helpers.TypeHelper;
-import br.com.docvirtus.commons.data.rules.AbstractRules;
-import br.com.docvirtus.commons.rest.share.rules.ResultRuleHolder;
+
+import br.com.docvirtus.commons.rules.AbstractRules;
+import br.com.docvirtus.commons.rules.ResultRuleHolder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;

@@ -3,8 +3,7 @@ package br.com.akowalski.generators;
 import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.KcgClass;
 import br.com.akowalski.pojos.KcgSubClass;
-import br.com.docvirtus.commons.data.annotation.Entity;
-import br.com.docvirtus.commons.data.annotation.RulesListener;
+import br.com.docvirtus.commons.annotation.RulesListener;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -14,6 +13,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
+import javax.swing.text.html.parser.Entity;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;

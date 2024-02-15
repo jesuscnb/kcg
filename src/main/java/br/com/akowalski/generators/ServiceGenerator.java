@@ -2,7 +2,7 @@ package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.KcgClass;
-import br.com.docvirtus.commons.data.service.AbstractService;
+import br.com.docvirtus.commons.service.AbstractService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;

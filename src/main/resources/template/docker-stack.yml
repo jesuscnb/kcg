@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  service-name:
+    container_name: service-name
+    image: ${IMAGE}
+    networks:
+      - webgateway
+    environment:
+      TZ: America/Campo_Grande
+      app_name: ${NAME}
+      app_version: ${VERSION}
+      region: ${REGION}
+    healthcheck:
+      test: "wget --quiet --spider 'http://localhost:3000/${CONTEXT}/${API_VERSION}/healthcheck' || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+      replicas: ${REPLICAS}
+      placement:
+        max_replicas_per_node: 1  
+        constraints:
+          - "node.role==worker"
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: stop-first
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.${REGION}-${NAME}.rule=Host(`${DOMAIN}`) && PathPrefix(`/${CONTEXT}`)"
+        - "traefik.http.services.${REGION}-${NAME}-service.loadbalancer.server.port=3000"
+        - "traefik.http.routers.${REGION}-${NAME}.entrypoints=web"
+networks:
+  webgateway:
+    external: true

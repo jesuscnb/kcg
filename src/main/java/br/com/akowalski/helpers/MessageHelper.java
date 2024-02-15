@@ -5,30 +5,15 @@ import java.text.MessageFormat;
 public class MessageHelper {
 
     public static String format(Type type, String... args) {
-        switch (type) {
-            case NOT_NULL -> {
-                return new MessageFormat(Type.NOT_NULL.message).format(args);
-            }
-            case MIN_SIZE -> {
-                return new MessageFormat(Type.MIN_SIZE.message).format(args);
-            }
-            case MAX_SIZE -> {
-                return new MessageFormat(Type.MAX_SIZE.message).format(args);
-            }
-            case MIN_DATE -> {
-                return new MessageFormat(Type.MIN_DATE.message).format(args);
-            }
-            case MAX_DATE -> {
-                return new MessageFormat(Type.MAX_DATE.message).format(args);
-            }
-            case EMAIL -> {
-                return new MessageFormat(Type.EMAIL.message).format(args);
-            }
-            case CPF -> {
-                return new MessageFormat(Type.CPF.message).format(args);
-            }
-        }
-        return null;
+        return switch (type) {
+            case NOT_NULL -> new MessageFormat(Type.NOT_NULL.message).format(args);
+            case MIN_SIZE -> new MessageFormat(Type.MIN_SIZE.message).format(args);
+            case MAX_SIZE -> new MessageFormat(Type.MAX_SIZE.message).format(args);
+            case MIN_DATE -> new MessageFormat(Type.MIN_DATE.message).format(args);
+            case MAX_DATE -> new MessageFormat(Type.MAX_DATE.message).format(args);
+            case EMAIL -> new MessageFormat(Type.EMAIL.message).format(args);
+            case CPF -> new MessageFormat(Type.CPF.message).format(args);
+        };
     }
 
     public enum Type {

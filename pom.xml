@@ -9,8 +9,8 @@
     <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -21,13 +21,8 @@
         </dependency>
         <dependency>
             <groupId>br.com.docvirtus</groupId>
-            <artifactId>docvirtus-commons-data</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.docvirtus</groupId>
-            <artifactId>docvirtus-commons-rest</artifactId>
-            <version>1.0.0</version>
+            <artifactId>docvirtus-commons</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -37,7 +32,17 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.1</version>
+            <version>4.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.15.1</version>
         </dependency>
     </dependencies>
 

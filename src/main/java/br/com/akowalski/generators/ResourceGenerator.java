@@ -2,8 +2,8 @@ package br.com.akowalski.generators;
 
 import br.com.akowalski.constants.Messages;
 import br.com.akowalski.pojos.KcgClass;
-import br.com.docvirtus.commons.rest.config.ConfigRest;
-import br.com.docvirtus.commons.rest.transform.JsonTransform;
+import br.com.docvirtus.commons.config.Config;
+import br.com.docvirtus.commons.transform.JsonTransform;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
@@ -45,7 +45,7 @@ public class ResourceGenerator {
 
         CodeBlock resources = CodeBlock
                 .builder()
-                .add("path($T.get().SERVER_PATH + \"/" + clazz.name().toLowerCase() + "\" , () -> {\n", ParameterizedTypeName.get(ConfigRest.class)).indent()
+                .add("path($T.get().SERVER_PATH + \"/" + clazz.name().toLowerCase() + "\" , () -> {\n", ParameterizedTypeName.get(Config.class)).indent()
                 .add("post(\"\", (request, response) -> service.save(JsonTransform.gson().fromJson(request.body(), $T.class)), JsonTransform::response ); \n", entityClass)
                 .add("put(\"/:id\", (request, response) -> service.update($T.gson().fromJson(request.body(), $T.class),request.params(\":id\")), JsonTransform::response ); \n", ParameterizedTypeName.get(JsonTransform.class), entityClass)
                 .add("get(\"\", (request, response) -> service.findAll(), JsonTransform::response ); \n")

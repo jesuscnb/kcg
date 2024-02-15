@@ -14,12 +14,11 @@ public class FileHelper {
         if (StringUtils.isNotEmpty(customPath)) {
             file = new File(customPath);
             System.out.println("build codes on directory: " + file.getAbsolutePath() + "/" + javaFile.toJavaFileObject().getName());
-            javaFile.writeTo(file);
         } else {
             file = new File(Paths.get(new File(".").getAbsolutePath() + "/src/main/java").toUri());
             System.out.println("build codes on directory: " + file.getAbsolutePath() + "/" + javaFile.toJavaFileObject().getName());
-            javaFile.writeTo(file);
         }
+        javaFile.writeTo(file);
     }
 
 }

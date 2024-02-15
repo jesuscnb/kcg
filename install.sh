@@ -8,7 +8,7 @@ jpackage --copyright "Open Source Kowalski Code Generator 2023" --input target/ 
 
 sudo dpkg -i kcg*.deb
 
-sudo ln -s /opt/kcode/bin/kcg /usr/bin/kcg
+sudo ln -s /opt/kcg/bin/kcg /usr/bin/kcg
 sudo chmod +x /usr/bin/kcg
 
 rm kcg*.deb

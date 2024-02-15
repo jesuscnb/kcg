@@ -1,0 +1,77 @@
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Dmaven.artifact.threads=50 -DinstallAtEnd=true -DdeployAtEnd=true"
+  REGISTRY: "$CI_USER_GIT"
+  NAME: "{{APP_NAME}}"
+  API_VERSION: "v1"
+  REPLICAS: "1"
+  DOMAIN: "$API_DEFAULT_DOMAIN"
+  CONTEXT: "{{CONTEXT}}"
+
+image: maven:3-openjdk-17
+
+stages:
+  - build
+  - config
+  - package
+  - deploy
+
+cache:
+  paths:
+    - .m2/repository
+    - target/
+    - .env
+
+build:
+  stage: build
+  script:
+    -  mvn clean package -B -s $MAVEN_SETTINGS
+  artifacts:
+    paths:
+      - target/*-jar-with-dependencies.jar
+      - docker-stack.yml
+
+config:
+  stage: config
+  before_script:
+    - VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+  script:
+    - echo "REGION=$CI_COMMIT_BRANCH" > .env
+    - echo "REPLICAS=$REPLICAS" >> .env
+    - echo "NAME=$NAME" >> .env
+    - echo "DOMAIN=$DOMAIN" >> .env
+    - echo "CONTEXT=$CONTEXT" >> .env
+    - echo "VERSION=$VERSION" >> .env
+    - echo "API_VERSION=$API_VERSION" >> .env
+    - echo "IMAGE=virtusjenkins/$NAME-$CI_COMMIT_BRANCH:$VERSION" >> .env
+    - echo .env
+  artifacts:
+    reports:
+      dotenv: .env
+
+package:
+  stage: package
+  image: docker:20.10.10
+  services:
+    - docker:20.10.10-dind
+  script:
+    - echo "$REGISTRY" | docker login -u virtusjenkins --password-stdin
+    - docker build -t virtusjenkins/$NAME-$REGION:$VERSION .
+    - docker push virtusjenkins/$NAME-$REGION:$VERSION
+
+stage:
+  stage: deploy
+  image: docker:20.10.10
+  services:
+    - docker:20.10.10-dind
+  variables:
+    DOCKER_HOST: tcp://$SWARM_MASTER:2376    
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "certs"
+  script:
+    - sed -i docker-stack.yml -e 's/service-name/'"$REGION-${NAME}"'/g'
+    - mkdir $DOCKER_CERT_PATH
+    - echo "$SWARM_CA" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$SWARM_CERT" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$SWARM_KEY" > $DOCKER_CERT_PATH/key.pem
+    - docker stack deploy -c docker-stack.yml --with-registry-auth $NAME-$REGION

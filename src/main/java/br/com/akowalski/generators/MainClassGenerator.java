@@ -1,14 +1,13 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.constants.Messages;
-import br.com.akowalski.pojos.KcgClass;
+import br.com.akowalski.helpers.FileHelper;
+import br.com.akowalski.pojos.KcgProject;
 import br.com.docvirtus.commons.Bootstrap;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
 
@@ -18,10 +17,9 @@ public class MainClassGenerator {
         return new MainClassGenerator();
     }
 
-    public JavaFile construct(KcgClass clazz) {
+    public JavaFile construct(KcgProject clazz) {
         CodeBlock resources = CodeBlock
                 .builder()
-                .addStatement("log.info(\"start bootstrap\")")
                 .addStatement("$T.init()", ParameterizedTypeName.get(Bootstrap.class))
                 .build();
 
@@ -29,6 +27,7 @@ public class MainClassGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addModifiers(Modifier.STATIC)
                 .addCode(resources)
+                .addParameter(String[].class, "args")
                 .build();
 
         TypeSpec typeSpec = TypeSpec.classBuilder("App")
@@ -38,7 +37,7 @@ public class MainClassGenerator {
 
         return JavaFile
                 .builder(clazz.packageName(), typeSpec)
-                .indent(Messages.FOUR_WHITESPACES)
+                .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 
     }

@@ -1,6 +1,6 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.constants.Messages;
+import br.com.akowalski.helpers.FileHelper;
 import br.com.akowalski.pojos.KcgAttribute;
 import br.com.akowalski.pojos.KcgClass;
 import com.squareup.javapoet.JavaFile;
@@ -24,7 +24,7 @@ public class EnumerateGenerator {
 
         return JavaFile
                 .builder(clazz.packageName() + ".enumerates", enumBuilder.addModifiers(Modifier.PUBLIC).build())
-                .indent(Messages.FOUR_WHITESPACES)
+                .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 
     }

@@ -1,6 +1,6 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.constants.Messages;
+import br.com.akowalski.helpers.FileHelper;
 import br.com.akowalski.pojos.KcgClass;
 import br.com.docvirtus.commons.config.Config;
 import br.com.docvirtus.commons.transform.JsonTransform;
@@ -48,7 +48,7 @@ public class ResourceGenerator {
                 .add("path($T.get().SERVER_PATH + \"/" + clazz.name().toLowerCase() + "\" , () -> {\n", ParameterizedTypeName.get(Config.class)).indent()
                 .add("post(\"\", (request, response) -> service.save(JsonTransform.gson().fromJson(request.body(), $T.class)), JsonTransform::response ); \n", entityClass)
                 .add("put(\"/:id\", (request, response) -> service.update($T.gson().fromJson(request.body(), $T.class),request.params(\":id\")), JsonTransform::response ); \n", ParameterizedTypeName.get(JsonTransform.class), entityClass)
-                .add("get(\"\", (request, response) -> service.findAll(), JsonTransform::response ); \n")
+                .add("get(\"\", (request, response) -> service.findAll(request), JsonTransform::response ); \n")
                 .add("get(\"/:id\", (request, response) -> service.findById(request.params(\":id\")), JsonTransform::response ); \n")
                 .add("delete(\"/:id\", (request, response) -> service.delete(request.params(\":id\")), JsonTransform::response ); \n").unindent()
                 .add("});")
@@ -70,7 +70,7 @@ public class ResourceGenerator {
         return JavaFile
                 .builder(clazz.packageName() + ".resources", typeSpec)
                 .addStaticImport(spark.Spark.class, "post", "put", "delete", "get", "path")
-                .indent(Messages.FOUR_WHITESPACES)
+                .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 
     }

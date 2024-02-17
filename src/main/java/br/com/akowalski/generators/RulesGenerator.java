@@ -1,6 +1,6 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.constants.Messages;
+import br.com.akowalski.helpers.FileHelper;
 import br.com.akowalski.helpers.MessageHelper;
 import br.com.akowalski.helpers.TypeHelper;
 
@@ -85,7 +85,7 @@ public class RulesGenerator {
 
         return JavaFile
                 .builder(clazz.packageName() + ".rules", typeSpec)
-                .indent(Messages.FOUR_WHITESPACES)
+                .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 
 

@@ -1,6 +1,6 @@
 package br.com.akowalski.generators;
 
-import br.com.akowalski.constants.Messages;
+import br.com.akowalski.helpers.FileHelper;
 import br.com.akowalski.pojos.KcgClass;
 import br.com.docvirtus.commons.service.AbstractService;
 import com.squareup.javapoet.ClassName;
@@ -39,7 +39,7 @@ public class ServiceGenerator {
 
         return JavaFile
                 .builder(clazz.packageName() + ".services", typeSpec)
-                .indent(Messages.FOUR_WHITESPACES)
+                .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 
     }

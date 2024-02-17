@@ -1,0 +1,168 @@
+[
+  {
+    "name": "Parlamentares",
+    "serializedName": "parlamentares",
+    "packageName": "br.com.akowalski",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "sexo",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "dataNascimento",
+        "type": "date",
+        "rules": [
+          "maxDate=now"
+        ]
+      },
+      {
+        "name": "tituloEleitor",
+        "type": "string"
+      },
+      {
+        "name": "rg",
+        "type": "string"
+      },
+      {
+        "name": "cpf",
+        "type": "string",
+        "rules": [
+          "notNull",
+          "minSize=11",
+          "maxSize=11"
+        ]
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "rules": [
+          "notNull",
+          "email"
+        ]
+      },
+      {
+        "name": "profissao",
+        "type": "string"
+      },
+      {
+        "name": "escolaridade",
+        "type": "Escolaridade",
+        "subClass" : {
+          "name": "Escolaridade",
+          "type": "E",
+          "fields": [
+            "SUPERIOR",
+            "FUNDAMENTAL",
+            "ANALFABETO"
+          ]
+        }
+      },
+      {
+        "name": "situacao",
+        "type": "boolean",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "localAtuacao",
+        "type": "string"
+      },
+      {
+        "name": "usuario",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "partido",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "dataFiliacao",
+        "type": "date",
+        "rules": [
+          "notNull",
+          "maxDate=now"
+        ]
+      },
+      {
+        "name": "dataDesfiliacao",
+        "type": "date"
+      },
+      {
+        "name": "logradouro",
+        "type": "string"
+      },
+      {
+        "name": "numero",
+        "type": "string"
+      },
+      {
+        "name": "bairro",
+        "type": "string"
+      },
+      {
+        "name": "cidade",
+        "type": "string"
+      },
+      {
+        "name": "contatoTelefone",
+        "type": "string"
+      },
+      {
+        "name": "contatoCelular",
+        "type": "string"
+      },
+      {
+        "name": "contatoFax",
+        "type": "string"
+      },
+      {
+        "name": "contatoHomePage",
+        "type": "string"
+      },
+      {
+        "name": "gabineteNumero",
+        "type": "string"
+      },
+      {
+        "name": "gabineteTelefone",
+        "type": "string"
+      },
+      {
+        "name": "gabineteFax",
+        "type": "string"
+      },
+      {
+        "name": "unidadeOrganizacional",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "chefeGabinete",
+        "type": "string"
+      }
+    ]
+  }
+]

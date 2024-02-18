@@ -46,7 +46,7 @@ public class MainClassGenerator {
                 .addParameter(String[].class, "args")
                 .build();
 
-        TypeSpec typeSpec = TypeSpec.classBuilder("App")
+        TypeSpec typeSpec = TypeSpec.classBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(main)
                 .build();

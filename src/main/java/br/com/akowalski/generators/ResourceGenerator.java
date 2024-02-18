@@ -21,7 +21,7 @@ public class ResourceGenerator {
         return new ResourceGenerator();
     }
 
-    public JavaFile construct(KcgClass clazz) throws IOException {
+    public JavaFile construct(KcgClass clazz) {
         String resourceName = clazz.name().concat("Resource");
         String serviceName = clazz.name().concat("Service");
         ClassName className = ClassName.bestGuess(clazz.packageName() + ".services." + serviceName);

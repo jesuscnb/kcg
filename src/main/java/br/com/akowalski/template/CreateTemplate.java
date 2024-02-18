@@ -19,11 +19,11 @@ import java.util.Objects;
 
 public class CreateTemplate {
 
-    public static void create(KcgProject project) {
-        var projectName = project.name().toLowerCase();
-        var packagePath = project.packageName().replaceAll("\\.", "/");
-        var projectMaven = project.name().toLowerCase() + FileHelper.SEPARADOR + FileHelper.MAVEN_PATH;
-        var projectResource = project.name().toLowerCase() + FileHelper.SEPARADOR + FileHelper.MAVEN_RESOURCE;
+    public static void create(String name, String packageName) {
+        var projectName = name.toLowerCase();
+        var packagePath = packageName.replaceAll("\\.", "/");
+        var projectMaven = name.toLowerCase() + FileHelper.SEPARADOR + FileHelper.MAVEN_PATH;
+        var projectResource = name.toLowerCase() + FileHelper.SEPARADOR + FileHelper.MAVEN_RESOURCE;
 
         try {
             /**
@@ -78,8 +78,8 @@ public class CreateTemplate {
                     FileHelper.TEMPLATE_PATH,
                     "/",
                     List.of(
-                            new ProjectFiles.Tag("APP_NAME", project.name().toLowerCase()),
-                            new ProjectFiles.Tag("CONTEXT", project.name().toLowerCase())
+                            new ProjectFiles.Tag("APP_NAME", name.toLowerCase()),
+                            new ProjectFiles.Tag("CONTEXT", name.toLowerCase())
                     ));
 
             var pom = new ProjectFiles(
@@ -87,9 +87,9 @@ public class CreateTemplate {
                     FileHelper.TEMPLATE_PATH,
                     "/",
                     List.of(
-                            new ProjectFiles.Tag("GROUP_ID", project.packageName()),
-                            new ProjectFiles.Tag("ARTFACT_ID", project.name().toLowerCase()),
-                            new ProjectFiles.Tag("PACKAGE", project.packageName())
+                            new ProjectFiles.Tag("GROUP_ID", packageName),
+                            new ProjectFiles.Tag("ARTFACT_ID", name.toLowerCase()),
+                            new ProjectFiles.Tag("PACKAGE", packageName)
                     ));
 
             var log4J = new ProjectFiles(
@@ -97,7 +97,7 @@ public class CreateTemplate {
                     FileHelper.TEMPLATE_PATH,
                     FileHelper.MAVEN_RESOURCE,
                     List.of(
-                            new ProjectFiles.Tag("APP_PACKAGE", project.packageName())
+                            new ProjectFiles.Tag("APP_PACKAGE", packageName)
                     ));
 
             var appProperties = new ProjectFiles(
@@ -105,7 +105,7 @@ public class CreateTemplate {
                     FileHelper.TEMPLATE_PATH,
                     FileHelper.MAVEN_RESOURCE,
                     List.of(
-                            new ProjectFiles.Tag("CONTEXT", project.name())
+                            new ProjectFiles.Tag("CONTEXT", name)
                     ));
 
             var files = List.of(
@@ -139,12 +139,6 @@ public class CreateTemplate {
 
                 FileUtils.write(f, content, "UTF-8");
             }
-
-            /**
-             * Criando Main class
-             */
-            var javaFile = MainClassGenerator.init().construct(project);
-            FileHelper.writeToOutputFile(javaFile, projectMaven);
 
 
         } catch (IOException e) {

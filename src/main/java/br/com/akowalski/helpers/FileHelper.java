@@ -14,6 +14,7 @@ public class FileHelper {
     public static String TEMPLATE_PATH = "template";
     public static String MAVEN_RESOURCE = "src/main/resources";
     public static String SEPARADOR = "/";
+    public static String MAIN_CLASS_NAME = "App";
 
     public static void writeToOutputFile(JavaFile javaFile, String customPath) throws IOException {
         File file = null;

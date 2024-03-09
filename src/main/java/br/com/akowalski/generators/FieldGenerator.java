@@ -24,10 +24,10 @@ public class FieldGenerator {
         return new FieldGenerator();
     }
 
-    public List<FieldSpec> build(KcgClass kcgClass) {
+    public List<FieldSpec> build(KcgClass kcgClass, String packageName) {
         List<FieldSpec> fiels = new ArrayList<>();
         for (KcgAttribute s : kcgClass.attributes()) {
-            fiels.add(build(s, kcgClass.packageName()));
+            fiels.add(build(s, packageName));
         }
         return fiels;
     }

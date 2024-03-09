@@ -40,11 +40,11 @@ public class RulesGenerator {
         return new RulesGenerator();
     }
 
-    public JavaFile build(KcgClass clazz) {
+    public JavaFile build(KcgClass clazz, String packageName) {
 
         String entityName = StringUtils.capitalize(clazz.name());
         String name = entityName + "Rules";
-        ClassName entityClass = ClassName.bestGuess(clazz.packageName() + ".models." + clazz.name());
+        ClassName entityClass = ClassName.bestGuess(packageName + ".models." + clazz.name());
 
         CodeBlock.Builder code = CodeBlock.builder();
         code.addStatement("this.rules = new $T<>()", ParameterizedTypeName.get(HashSet.class));
@@ -58,7 +58,7 @@ public class RulesGenerator {
 
                 MethodSpec rules = MethodSpec.methodBuilder(s.name().toLowerCase())
                         .addModifiers(Modifier.PUBLIC)
-                        .returns(ClassName.bestGuess(clazz.packageName() + ".rules." + name))
+                        .returns(ClassName.bestGuess(packageName + ".rules." + name))
                         .addParameter(type, "value")
                         .addCode(createRule(type, s.name(), s.rules()))
                         .build();
@@ -84,7 +84,7 @@ public class RulesGenerator {
                 .build();
 
         return JavaFile
-                .builder(clazz.packageName() + ".rules", typeSpec)
+                .builder(packageName + ".rules", typeSpec)
                 .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 

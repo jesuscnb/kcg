@@ -20,9 +20,6 @@ public class ProjectCommands extends CommonCommands implements Runnable {
     @CommandLine.Option(names = {"-n", "--name"}, defaultValue = "demo-app")
     String name;
 
-    @CommandLine.Option(names = {"-p", "--package"}, defaultValue = "br.com.example")
-    String packageName;
-
     @CommandLine.ArgGroup(multiplicity = "1")
     TemplateInput args;
 
@@ -31,12 +28,12 @@ public class ProjectCommands extends CommonCommands implements Runnable {
     public void run() {
         CreateTemplate.create(name, packageName);
         var classes = KcgHelper.parse(args.json, args.archive);
-        ;
 
         if (!classes.isEmpty()) {
             CreateContent.create(
                     new KcgContent(
                             classes,
+                            packageName,
                             exclude,
                             output + "/" + FileHelper.MAVEN_PATH));
         }
@@ -48,7 +45,7 @@ public class ProjectCommands extends CommonCommands implements Runnable {
             List<Pair<String, String>> resources = null;
             if (!exclude.contains(Modules.C)) {
                 resources = classes.parallelStream()
-                        .map(s -> Pair.of(s.packageName().concat(".resources"), s.name().concat("Resource")))
+                        .map(s -> Pair.of(packageName.concat(".resources"), s.name().concat("Resource")))
                         .toList();
             }
             var projectMaven = name.toLowerCase() + FileHelper.SEPARADOR + FileHelper.MAVEN_PATH;

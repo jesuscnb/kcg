@@ -23,4 +23,7 @@ public class CommonCommands {
     @CommandLine.Option(names = {"-e", "--exclude"}, split = ",", paramLabel = "EXCLUDE LAYERS", description = "Add modules to skip generated")
     List<Modules> exclude = new ArrayList<>();
 
+    @CommandLine.Option(names = {"-p", "--package"}, defaultValue = "br.com.example")
+    String packageName;
+
 }

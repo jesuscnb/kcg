@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Colheita",
+    "serializedName": "colheita",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "tipo",
+        "type": "TipoCafe"
+      },
+      {
+        "name": "volume",
+        "type": "int",
+        "rules": [
+          "notNull",
+          "minSize=1",
+          "maxSize=1000"
+        ]
+      },
+      {
+        "name": "dataColheita",
+        "type": "date",
+        "rules": [
+          "notNull",
+          "minDate=01/01/1972",
+          "maxDate=now"
+        ]
+      },
+      {
+        "name": "processo",
+        "type": "ProcessoColheita"
+      },
+      {
+        "name": "maturacao",
+        "type": "int"
+      },
+      {
+        "name": "dadosClimaticos",
+        "type": "list",
+        "element": "DadosClimaticos"
+      },
+      {
+        "name": "observacoes",
+        "type": "string"
+      },
+      {
+        "name": "quantidadeSacasBeneficiada",
+        "type": "int"
+      },
+      {
+        "name": "classificacao",
+        "type": "Classificacao"
+      },
+      {
+        "name": "destinos",
+        "type": "array",
+        "element": "Cliente"
+      }
+    ]
+  },
+  {
+    "name": "Cliente",
+    "serializedName": "cliente",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "cnpj",
+        "type": "string",
+        "rules": [
+          "notNull",
+          "minSize=14",
+          "maxSize=14"
+        ]
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "rules": [
+          "notNull",
+          "email"
+        ]
+      },
+      {
+        "name": "situacao",
+        "type": "TipoSituacao",
+        "subClass": {
+          "name": "TipoSituacao",
+          "type": "E",
+          "fields": [
+            "ATIVO",
+            "SUSPENSO",
+            "INATIVO"
+          ]
+        },
+        "rules": [
+          "notNull"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Classificacao",
+    "serializedName": "classificacao",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "TipoCafe",
+    "serializedName": "tipoCafe",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ProcessoColheita",
+    "serializedName": "processoColheita",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "DadosClimaticos",
+    "serializedName": "dadosClimaticos",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "objectid"
+      },
+      {
+        "name": "nome",
+        "type": "string",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "evento",
+        "type": "EventoClimatico",
+        "subClass": {
+          "name": "EventoClimatico",
+          "type": "E",
+          "fields": [
+            "CHUVA",
+            "GRANIZO",
+            "ESTIAGEM"
+          ]
+        },
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "dataEvento",
+        "type": "date",
+        "rules": [
+          "notNull",
+          "minDate=01/01/1972",
+          "maxDate=now"
+        ]
+      },
+      {
+        "name": "perca",
+        "type": "int",
+        "rules": [
+          "notNull"
+        ]
+      },
+      {
+        "name": "descricao",
+        "type": "string"
+      }
+    ]
+  }
+]

@@ -14,7 +14,7 @@ public class ContentCommands extends CommonCommands implements Runnable {
     @Override
     public void run() {
         var classes = KcgHelper.parse(args.json, args.archive);
-        CreateContent.create(new KcgContent(classes, exclude, output));
+        CreateContent.create(new KcgContent(classes, packageName, exclude, output));
     }
 
 }

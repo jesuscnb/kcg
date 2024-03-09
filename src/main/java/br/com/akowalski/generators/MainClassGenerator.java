@@ -28,7 +28,7 @@ public class MainClassGenerator {
 
         CodeBlock.Builder builder = CodeBlock.builder();
         for (var c : classNames) {
-            builder.add("$T.init()", c);
+            builder.add("$T.init();" + System.lineSeparator(), c);
         }
 
         CodeBlock block = builder.build();
@@ -36,7 +36,7 @@ public class MainClassGenerator {
         CodeBlock mainContent = CodeBlock
                 .builder()
                 .addStatement("$T.init()", ParameterizedTypeName.get(Bootstrap.class))
-                .addStatement(block)
+                .add(block)
                 .build();
 
         MethodSpec main = MethodSpec.methodBuilder("main")

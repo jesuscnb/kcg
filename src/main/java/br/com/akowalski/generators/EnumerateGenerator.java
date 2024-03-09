@@ -15,7 +15,7 @@ public class EnumerateGenerator {
         return new EnumerateGenerator();
     }
 
-    public JavaFile contruct(KcgClass clazz) {
+    public JavaFile contruct(KcgClass clazz, String packageName) {
 
         TypeSpec.Builder enumBuilder = TypeSpec.enumBuilder(clazz.name());
         for (KcgAttribute attribute : clazz.attributes()) {
@@ -23,7 +23,7 @@ public class EnumerateGenerator {
         }
 
         return JavaFile
-                .builder(clazz.packageName() + ".enumerates", enumBuilder.addModifiers(Modifier.PUBLIC).build())
+                .builder(packageName + ".enumerates", enumBuilder.addModifiers(Modifier.PUBLIC).build())
                 .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 

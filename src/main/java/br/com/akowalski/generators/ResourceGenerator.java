@@ -21,11 +21,11 @@ public class ResourceGenerator {
         return new ResourceGenerator();
     }
 
-    public JavaFile construct(KcgClass clazz) {
+    public JavaFile construct(KcgClass clazz, String packageName) {
         String resourceName = clazz.name().concat("Resource");
         String serviceName = clazz.name().concat("Service");
-        ClassName className = ClassName.bestGuess(clazz.packageName() + ".services." + serviceName);
-        ClassName entityClass = ClassName.bestGuess(clazz.packageName() + ".models." + clazz.name());
+        ClassName className = ClassName.bestGuess(packageName + ".services." + serviceName);
+        ClassName entityClass = ClassName.bestGuess(packageName + ".models." + clazz.name());
 
         MethodSpec init = MethodSpec.methodBuilder("init")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -68,7 +68,7 @@ public class ResourceGenerator {
                 .build();
 
         return JavaFile
-                .builder(clazz.packageName() + ".resources", typeSpec)
+                .builder(packageName + ".resources", typeSpec)
                 .addStaticImport(spark.Spark.class, "post", "put", "delete", "get", "path")
                 .indent(FileHelper.FOUR_WHITESPACES)
                 .build();

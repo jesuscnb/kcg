@@ -19,10 +19,10 @@ public class ServiceGenerator {
         return new ServiceGenerator();
     }
 
-    public JavaFile construct(KcgClass clazz) {
+    public JavaFile construct(KcgClass clazz, String packageName) {
         String entityName = StringUtils.capitalize(clazz.name());
         String name = entityName + "Service";
-        ClassName entityClass = ClassName.bestGuess(clazz.packageName() + ".models." + clazz.name());
+        ClassName entityClass = ClassName.bestGuess(packageName + ".models." + clazz.name());
 
         MethodSpec instance = MethodSpec.methodBuilder("init")
                 .addModifiers(Modifier.PUBLIC)
@@ -38,7 +38,7 @@ public class ServiceGenerator {
                 .build();
 
         return JavaFile
-                .builder(clazz.packageName() + ".services", typeSpec)
+                .builder(packageName + ".services", typeSpec)
                 .indent(FileHelper.FOUR_WHITESPACES)
                 .build();
 

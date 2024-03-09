@@ -4,5 +4,5 @@ import br.com.akowalski.requests.Modules;
 
 import java.util.List;
 
-public record KcgContent(List<KcgClass> classes, List<Modules> exclude, String output) {
+public record KcgContent(List<KcgClass> classes, String packageName, List<Modules> exclude, String output) {
 }

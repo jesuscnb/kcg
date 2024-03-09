@@ -21,7 +21,7 @@ public class CreateContent {
                  * Gerando entity
                  */
                 if (!content.exclude().contains(Modules.E)) {
-                    var contrucEntity = EntityGenerator.init().contruct(classe);
+                    var contrucEntity = EntityGenerator.init().contruct(classe, content.packageName());
                     FileHelper.writeToOutputFile(contrucEntity, content.output());
                 }
 
@@ -29,7 +29,7 @@ public class CreateContent {
                  * Gerador service com Abstract
                  */
                 if (!content.exclude().contains(Modules.S)) {
-                    var constructService = ServiceGenerator.init().construct(classe);
+                    var constructService = ServiceGenerator.init().construct(classe, content.packageName());
                     FileHelper.writeToOutputFile(constructService, content.output());
                 }
 
@@ -37,7 +37,7 @@ public class CreateContent {
                  * Gerador de resource
                  */
                 if (!content.exclude().contains(Modules.C)) {
-                    var construcResource = ResourceGenerator.init().construct(classe);
+                    var construcResource = ResourceGenerator.init().construct(classe, content.packageName());
                     FileHelper.writeToOutputFile(construcResource, content.output());
                 }
 
@@ -45,7 +45,7 @@ public class CreateContent {
                  * Gerador de rules
                  */
                 if (!content.exclude().contains(Modules.R)) {
-                    var generateRules = RulesGenerator.init().build(classe);
+                    var generateRules = RulesGenerator.init().build(classe, content.packageName());
                     FileHelper.writeToOutputFile(generateRules, content.output());
                 }
 
